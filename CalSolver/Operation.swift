@@ -11,6 +11,8 @@ import UIKit
 enum OperationType: String {
     case Add = "+"
     case Minus = "-"
+    case Multiply = "*"
+    case Divide = "/"
     case Equal = "="
 }
 
@@ -38,6 +40,14 @@ class Operation {
             return current + number
         case .Minus:
             return current - number
+        case .Multiply:
+            return current * number
+        case .Divide:
+            if number == 0 || current % number != 0 {
+                return nil
+            } else {
+                return current / number
+            }
         default:
             return current
         }
