@@ -19,7 +19,7 @@ enum OperationType: String {
 
 class Operation {
     var type: OperationType
-    var number: Int
+    var number: Int?
     
     let spec = Spec()
     
@@ -28,13 +28,13 @@ class Operation {
         guard let type = OperationType(rawValue: text.substring(to: text.index(after: text.startIndex))) else { return nil }
         if type == .Delete {
             guard text.characters.count == 1 else { return nil }
-            return Operation(type: .Delete, num: 0)
+            return Operation(type: .Delete, num: nil)
         }
         guard let number = Int(text.substring(from: text.index(after: text.startIndex))) else { return nil }
         return Operation(type: type, num: number)
     }
     
-    init(type: OperationType, num: Int) {
+    init(type: OperationType, num: Int?) {
         self.type = type
         self.number = num
     }
@@ -42,16 +42,16 @@ class Operation {
     func operate(current: Int) -> Int? {
         switch type {
         case .Add:
-            return current + number
+            return current + number!
         case .Minus:
-            return current - number
+            return current - number!
         case .Multiply:
-            return current * number
+            return current * number!
         case .Divide:
-            if number == 0 || current % number != 0 {
+            if number! == 0 || current % number! != 0 {
                 return nil
             } else {
-                return current / number
+                return current / number!
             }
         case .Delete:
             return current / 10
@@ -61,7 +61,12 @@ class Operation {
     }
     
     func toString() -> String {
-        return "  " + type.rawValue + " " + String(number) + "  "
+        let opString = "  " + type.rawValue + " "
+        if let number = number {
+            return opString + String(number) + "  "
+        } else {
+            return opString
+        }
     }
     
     func labelView() -> UILabel {
