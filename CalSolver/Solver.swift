@@ -9,6 +9,8 @@
 import UIKit
 
 class Solver {
+    let maxDepth = 10
+    
     func generateOperations(operations: [Operation], indices: [Int]) -> [Operation] {
         var result: [Operation] = []
         for index in indices {
@@ -25,6 +27,13 @@ class Solver {
         while !queue.isEmpty {
             let now = queue[0]
             var steps = map[now]!
+            
+            // Quit method if we are too deep and find no solution.
+            // There should be something wrong in the input
+            if steps.count > maxDepth {
+                return nil
+            }
+            
             queue.remove(at: 0)
             
             for (index, operation) in operations.enumerated() {

@@ -196,6 +196,8 @@ class ViewController: UIViewController {
         guard let to = Int(toTextField.text ?? "") else { return }
         if let sortedOperations = solver.solve(from: from, to: to, operations: operationManager.operations) {
             resultManager.showResult(from: from, to: to, operations: sortedOperations)
+        } else {
+            resultManager.showError()
         }
     }
     

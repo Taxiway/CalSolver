@@ -13,6 +13,7 @@ enum OperationType: String {
     case Minus = "-"
     case Multiply = "*"
     case Divide = "/"
+    case Delete = "<"
     case Equal = "="
 }
 
@@ -25,6 +26,10 @@ class Operation {
     class func createOperation(text: String) -> Operation? {
         guard text.characters.count >= 1 else { return nil }
         guard let type = OperationType(rawValue: text.substring(to: text.index(after: text.startIndex))) else { return nil }
+        if type == .Delete {
+            guard text.characters.count == 1 else { return nil }
+            return Operation(type: .Delete, num: 0)
+        }
         guard let number = Int(text.substring(from: text.index(after: text.startIndex))) else { return nil }
         return Operation(type: type, num: number)
     }
@@ -48,6 +53,8 @@ class Operation {
             } else {
                 return current / number
             }
+        case .Delete:
+            return current / 10
         default:
             return current
         }
