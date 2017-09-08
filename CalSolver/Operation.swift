@@ -16,6 +16,8 @@ enum OperationType: String {
     case Delete = "<"
     case Append = "A"
     case Convert = ">"
+    case Power = "X"
+    case Reverse = "+-"
     case Equal = "="
 }
 
@@ -28,6 +30,9 @@ class Operation {
     
     class func createOperation(text: String) -> Operation? {
         guard text.characters.count >= 1 else { return nil }
+        if let type = OperationType(rawValue: text) {
+            return Operation(type: type)
+        }
         guard let type = OperationType(rawValue: text.substring(to: text.index(after: text.startIndex))) else {
             if let number = Int(text) {
                 // Append operation
@@ -50,7 +55,7 @@ class Operation {
         return Operation(type: type, num: number)
     }
     
-    init(type: OperationType, num: Int?, num2: Int? = nil) {
+    init(type: OperationType, num: Int? = nil, num2: Int? = nil) {
         self.type = type
         self.number = num
         self.number2 = num2
@@ -76,6 +81,14 @@ class Operation {
             return Int(String(current) + String(number!))
         case .Convert:
             return Int(String(current).replacingOccurrences(of: String(number!), with: String(number2!)))
+        case .Power:
+            var ret = 1
+            for _ in 1...number! {
+                ret *= current
+            }
+            return ret
+        case .Reverse:
+            return -current
         default:
             return current
         }
