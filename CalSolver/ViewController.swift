@@ -25,7 +25,11 @@ struct Spec {
     }
 }
 
-class ViewController: UIViewController {
+protocol SolverHandler {
+    func solve()
+}
+
+class ViewController: UIViewController, SolverHandler {
     
     var titleLabel: UILabel!
     var fromToView: UIView!
@@ -124,6 +128,7 @@ class ViewController: UIViewController {
         view.addSubview(operationView)
         
         operationManager = OperationViewManager(operationView: operationView)
+        operationManager.delegate = self
         
         startButton = UIButton(type: .system)
         startButton.setTitle("Start Calculation", for: .normal)

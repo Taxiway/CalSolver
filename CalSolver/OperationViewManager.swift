@@ -22,6 +22,8 @@ class OperationViewManager : NSObject {
     var currentRow: Int
     var currentTotalWidth: CGFloat
     
+    var delegate: SolverHandler?
+    
     init(operationView: UIView) {
         self.baseView = operationView
         self.addButton = UIButton(type: .system)
@@ -172,7 +174,11 @@ class OperationViewManager : NSObject {
 
 extension OperationViewManager : UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        handleAddOperation()
+        if (operatorTextField.text!.characters.count == 0) {
+            delegate?.solve()
+        } else {
+            handleAddOperation()
+        }
         return true
     }
 }
