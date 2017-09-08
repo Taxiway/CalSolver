@@ -44,6 +44,7 @@ class ResultViewManager {
     
     func showResult(from: Int, to: Int, operations: [Operation]) {
         clearPreviousResult()
+        scrollView.setContentOffset(.zero, animated: false)
         views.append(from.labelView())
         for operation in operations {
             views.append(operation.labelView())

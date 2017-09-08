@@ -206,6 +206,7 @@ class ViewController: UIViewController {
         fromTextField.text = ""
         toTextField.text = ""
         operationManager.clearAllForNextRun()
+        fromTextField.becomeFirstResponder()
     }
 
 }
