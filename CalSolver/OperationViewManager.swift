@@ -8,7 +8,7 @@
 
 import UIKit
 
-class OperationViewManager {
+class OperationViewManager : NSObject {
     var baseView: UIView
     var addButton: UIButton
     var clearButton: UIButton
@@ -27,6 +27,7 @@ class OperationViewManager {
         self.operations = []
         self.operationViews = []
         self.operationViewConstraints = []
+        super.init()
         setupViews()
         setupViewConstraints()
     }
@@ -54,6 +55,7 @@ class OperationViewManager {
         
         operatorTextField.translatesAutoresizingMaskIntoConstraints = false
         operatorTextField.backgroundColor = spec.textFiledBackgoundYellow
+        operatorTextField.delegate = self
         baseView.addSubview(operatorTextField)
     }
     
@@ -138,5 +140,12 @@ class OperationViewManager {
     func clearAllForNextRun() {
         handleClearOperations()
         operatorTextField.text = ""
+    }
+}
+
+extension OperationViewManager : UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        handleAddOperation()
+        return true
     }
 }
