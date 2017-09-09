@@ -103,7 +103,7 @@ class Operation {
                 return opString + String(number) + "  "
             }
         } else {
-            return opString
+            return opString + " "
         }
     }
     
@@ -112,6 +112,10 @@ class Operation {
         label.text = toString()
         label.backgroundColor = spec.operationLabelRed
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.layer.cornerRadius = 4.0
+        label.clipsToBounds = true
+        label.layer.borderColor = UIColor.black.cgColor
+        label.layer.borderWidth = 1.0
         label.sizeToFit()
         return label
     }

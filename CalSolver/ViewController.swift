@@ -15,7 +15,7 @@ struct Spec {
     var backgroundGray: UIColor = UIColor(white: 0.9, alpha: 1.0)
     var backgroundBlue: UIColor = UIColor(colorLiteralRed: 0.0, green: 0.0, blue: 1.0, alpha: 0.3)
     var textFiledBackgoundYellow: UIColor = .yellow
-    var operationLabelRed: UIColor = UIColor(colorLiteralRed: 0.3, green: 0.0, blue: 0.0, alpha: 0.3)
+    var operationLabelRed: UIColor = UIColor(colorLiteralRed: 1.0, green: 0.8, blue: 0.8, alpha: 0.3)
     var rowHeight: CGFloat = 28.0
     var textFieldWidth: CGFloat = 64.0
     var buttonHorizontalInset: CGFloat = 10.0
