@@ -77,8 +77,6 @@ class OperationViewManager : NSObject {
         if operationCount == 1 {
             operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .top, relatedBy: .equal,
                                                                toItem: baseView, attribute: .top, multiplier: 1.0, constant: spec.verticalMargin[1]))
-            /*operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .leading, relatedBy: .equal,
-                                                               toItem: baseView, attribute: .leading, multiplier: 1.0, constant: spec.verticalMargin[1]))*/
             operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .height, relatedBy: .equal,
                                                                toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: spec.rowHeight))
         } else {
@@ -89,8 +87,6 @@ class OperationViewManager : NSObject {
                 
                 operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .top, relatedBy: .equal,
                                                                    toItem: baseView, attribute: .top, multiplier: 1.0, constant: spec.verticalMargin[1] + CGFloat(currentRow) * (spec.verticalMargin[1] + spec.rowHeight)))
-                /*operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .leading, relatedBy: .equal,
-                                                                   toItem: baseView, attribute: .leading, multiplier: 1.0, constant: spec.verticalMargin[1]))*/
                 operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .height, relatedBy: .equal,
                                                                    toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: spec.rowHeight))
                 
