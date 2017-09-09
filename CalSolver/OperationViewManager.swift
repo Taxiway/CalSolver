@@ -18,6 +18,7 @@ class OperationViewManager : NSObject {
     var operations: [Operation]
     var operationViews: [UILabel]
     var operationViewConstraints: [NSLayoutConstraint]
+    var currentRowLeftConstraint: NSLayoutConstraint?
     
     var currentRow: Int
     var currentTotalWidth: CGFloat
@@ -76,19 +77,20 @@ class OperationViewManager : NSObject {
         if operationCount == 1 {
             operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .top, relatedBy: .equal,
                                                                toItem: baseView, attribute: .top, multiplier: 1.0, constant: spec.verticalMargin[1]))
-            operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .leading, relatedBy: .equal,
-                                                               toItem: baseView, attribute: .leading, multiplier: 1.0, constant: spec.verticalMargin[1]))
+            /*operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .leading, relatedBy: .equal,
+                                                               toItem: baseView, attribute: .leading, multiplier: 1.0, constant: spec.verticalMargin[1]))*/
             operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .height, relatedBy: .equal,
                                                                toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: spec.rowHeight))
         } else {
             if shouldStartNewRow(newLabel: newLabel) {
                 currentTotalWidth = 0
                 currentRow += 1
+                currentRowLeftConstraint = nil
                 
                 operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .top, relatedBy: .equal,
                                                                    toItem: baseView, attribute: .top, multiplier: 1.0, constant: spec.verticalMargin[1] + CGFloat(currentRow) * (spec.verticalMargin[1] + spec.rowHeight)))
-                operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .leading, relatedBy: .equal,
-                                                                   toItem: baseView, attribute: .leading, multiplier: 1.0, constant: spec.verticalMargin[1]))
+                /*operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .leading, relatedBy: .equal,
+                                                                   toItem: baseView, attribute: .leading, multiplier: 1.0, constant: spec.verticalMargin[1]))*/
                 operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .height, relatedBy: .equal,
                                                                    toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: spec.rowHeight))
                 
@@ -103,7 +105,26 @@ class OperationViewManager : NSObject {
             }
         }
         currentTotalWidth += (newLabel.frame.size.width + spec.verticalMargin[1])
+        
+        if let constraint = currentRowLeftConstraint {
+            constraint.constant = (baseView.frame.size.width - currentTotalWidth + spec.verticalMargin[1]) / 2.0
+        } else {
+            let constraint = NSLayoutConstraint(item: newLabel, attribute: .leading, relatedBy: .equal,
+                                                toItem: baseView, attribute: .leading, multiplier: 1.0,
+                                                constant: (baseView.frame.size.width - currentTotalWidth + spec.verticalMargin[1]) / 2.0)
+            operationViewConstraints.append(constraint)
+            currentRowLeftConstraint = constraint
+        }
+        
         NSLayoutConstraint.activate(operationViewConstraints)
+    }
+    
+    func animate(label: UILabel) {
+        label.alpha = 0.0
+        UIView.animate(withDuration: 0.5, animations: {
+            label.alpha = 1.0
+            self.baseView.layoutIfNeeded()
+        })
     }
     
     @objc func handleAddOperation() {
@@ -117,6 +138,8 @@ class OperationViewManager : NSObject {
         
         addConstraintsForNewLabel(newLabel: label)
         
+        animate(label: label)
+        
         operatorTextField.text = ""
     }
     
@@ -129,6 +152,7 @@ class OperationViewManager : NSObject {
         operationViews.removeAll()
         
         NSLayoutConstraint.deactivate(operationViewConstraints)
+        currentRowLeftConstraint = nil
         operationViewConstraints.removeAll()
         
         currentTotalWidth = 0.0

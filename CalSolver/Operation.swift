@@ -33,7 +33,7 @@ class Operation {
         if let type = OperationType(rawValue: text) {
             return Operation(type: type)
         }
-        guard let type = OperationType(rawValue: text.substring(to: text.index(after: text.startIndex))) else {
+        guard let type = OperationType(rawValue: text.uppercased().substring(to: text.index(after: text.startIndex))) else {
             if let number = Int(text) {
                 // Append operation
                 return Operation(type: .Append, num: number)
