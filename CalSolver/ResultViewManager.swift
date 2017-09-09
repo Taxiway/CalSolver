@@ -106,6 +106,10 @@ extension Int {
         label.backgroundColor = Spec().operationLabelRed
         label.translatesAutoresizingMaskIntoConstraints = false
         label.sizeToFit()
+        label.layer.cornerRadius = 4.0
+        label.clipsToBounds = true
+        label.layer.borderColor = UIColor.black.cgColor
+        label.layer.borderWidth = 1.0
         return label
     }
 }

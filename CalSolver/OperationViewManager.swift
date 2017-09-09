@@ -170,6 +170,10 @@ class OperationViewManager : NSObject {
         handleClearOperations()
         operatorTextField.text = ""
     }
+    
+    func becomeFirstResponder() {
+        operatorTextField.becomeFirstResponder()
+    }
 }
 
 extension OperationViewManager : UITextFieldDelegate {

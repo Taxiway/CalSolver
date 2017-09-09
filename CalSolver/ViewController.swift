@@ -67,11 +67,13 @@ class ViewController: UIViewController, SolverHandler {
         fromTextField.backgroundColor = spec.textFiledBackgoundYellow
         fromTextField.translatesAutoresizingMaskIntoConstraints = false
         fromTextField.becomeFirstResponder()
+        fromTextField.delegate = self
         fromToView.addSubview(fromTextField)
         
         toTextField = UITextField()
         toTextField.backgroundColor = spec.textFiledBackgoundYellow
         toTextField.translatesAutoresizingMaskIntoConstraints = false
+        toTextField.delegate = self
         fromToView.addSubview(toTextField)
         
         var constraints = [NSLayoutConstraint]()
@@ -216,3 +218,14 @@ class ViewController: UIViewController, SolverHandler {
 
 }
 
+extension ViewController : UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if (textField == fromTextField) {
+            toTextField.becomeFirstResponder()
+        } else {
+            assert(textField == toTextField)
+            operationManager.becomeFirstResponder()
+        }
+        return true
+    }
+}
