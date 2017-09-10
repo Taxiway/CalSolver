@@ -27,6 +27,7 @@ struct Spec {
 
 protocol SolverHandler {
     func solve()
+    func show(_ vc: UIViewController, sender: Any?)
 }
 
 class ViewController: UIViewController, SolverHandler {
@@ -199,8 +200,18 @@ class ViewController: UIViewController, SolverHandler {
     }
 
     func solve() {
-        guard let from = Int(fromTextField.text ?? "") else { return }
-        guard let to = Int(toTextField.text ?? "") else { return }
+        guard let from = Int(fromTextField.text ?? "") else {
+            let alert = UIAlertController(title: "Invalid Input", message: "The number in \"From\" field is invalid", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            self.show(alert, sender: nil)
+            return
+        }
+        guard let to = Int(toTextField.text ?? "") else {
+            let alert = UIAlertController(title: "Invalid Input", message: "The number in \"From\" field is invalid", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            self.show(alert, sender: nil)
+            return
+        }
         if let sortedOperations = solver.solve(from: from, to: to, operations: operationManager.operations) {
             clearAllForNextRun()
             resultManager.showResult(from: from, to: to, operations: sortedOperations)

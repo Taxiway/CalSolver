@@ -125,7 +125,12 @@ class OperationViewManager : NSObject {
     
     @objc func handleAddOperation() {
         guard let operationString = operatorTextField.text else { return }
-        guard let operation = Operation.createOperation(text: operationString) else { return }
+        guard let operation = Operation.createOperation(text: operationString) else {
+            let alert = UIAlertController(title: "Invalid Input", message: "The operation string is invalid", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            delegate?.show(alert, sender: nil)
+            return
+        }
         
         operations.append(operation)
         let label = operation.labelView()
