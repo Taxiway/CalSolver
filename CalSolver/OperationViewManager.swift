@@ -72,13 +72,28 @@ class OperationViewManager : NSObject {
         return currentTotalWidth + width + spec.horizontalMargin[1] > baseView.frame.size.width - spec.horizontalMargin[1]
     }
     
-    func addConstraintsForNewLabel(newLabel: UILabel) {
+    func adjustCurrentRowConstraint(newLabel: UILabel) {
+        if let constraint = currentRowLeftConstraint {
+            constraint.constant = (baseView.frame.size.width - currentTotalWidth + spec.verticalMargin[1]) / 2.0
+        } else {
+            let constraint = NSLayoutConstraint(item: newLabel, attribute: .leading, relatedBy: .equal,
+                                                toItem: baseView, attribute: .leading, multiplier: 1.0,
+                                                constant: (baseView.frame.size.width - currentTotalWidth + spec.verticalMargin[1]) / 2.0)
+            operationViewConstraints.append(constraint)
+            currentRowLeftConstraint = constraint
+        }
+        NSLayoutConstraint.activate(operationViewConstraints)
+    }
+    
+    func addConstraintsForNewLabel(newLabel: UILabel) -> Bool {
         let operationCount = operations.count
+        var startNewRow = false
         if operationCount == 1 {
             operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .top, relatedBy: .equal,
                                                                toItem: baseView, attribute: .top, multiplier: 1.0, constant: spec.verticalMargin[1]))
             operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .height, relatedBy: .equal,
                                                                toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: spec.rowHeight))
+            startNewRow = true
         } else {
             if shouldStartNewRow(newLabel: newLabel) {
                 currentTotalWidth = 0
@@ -89,6 +104,7 @@ class OperationViewManager : NSObject {
                                                                    toItem: baseView, attribute: .top, multiplier: 1.0, constant: spec.verticalMargin[1] + CGFloat(currentRow) * (spec.verticalMargin[1] + spec.rowHeight)))
                 operationViewConstraints.append(NSLayoutConstraint(item: newLabel, attribute: .height, relatedBy: .equal,
                                                                    toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: spec.rowHeight))
+                startNewRow = true
                 
             } else {
                 let previousLabel = operationViews[operationCount - 2]
@@ -102,17 +118,8 @@ class OperationViewManager : NSObject {
         }
         currentTotalWidth += (newLabel.frame.size.width + spec.verticalMargin[1])
         
-        if let constraint = currentRowLeftConstraint {
-            constraint.constant = (baseView.frame.size.width - currentTotalWidth + spec.verticalMargin[1]) / 2.0
-        } else {
-            let constraint = NSLayoutConstraint(item: newLabel, attribute: .leading, relatedBy: .equal,
-                                                toItem: baseView, attribute: .leading, multiplier: 1.0,
-                                                constant: (baseView.frame.size.width - currentTotalWidth + spec.verticalMargin[1]) / 2.0)
-            operationViewConstraints.append(constraint)
-            currentRowLeftConstraint = constraint
-        }
-        
         NSLayoutConstraint.activate(operationViewConstraints)
+        return startNewRow
     }
     
     func animate(label: UILabel) {
@@ -121,6 +128,16 @@ class OperationViewManager : NSObject {
             label.alpha = 1.0
             self.baseView.layoutIfNeeded()
         })
+    }
+    
+    func addOperationViewAndConstraint(operation: Operation) -> (UILabel, Bool) {
+        let label = operation.labelView()
+        operationViews.append(label)
+        baseView.addSubview(label)
+        
+        let startNewRow = addConstraintsForNewLabel(newLabel: label)
+        self.baseView.layoutIfNeeded()
+        return (label, startNewRow)
     }
     
     @objc func handleAddOperation() {
@@ -133,11 +150,13 @@ class OperationViewManager : NSObject {
         }
         
         operations.append(operation)
-        let label = operation.labelView()
-        operationViews.append(label)
-        baseView.addSubview(label)
         
-        addConstraintsForNewLabel(newLabel: label)
+        let (label, startNewRow) = addOperationViewAndConstraint(operation: operation)
+        
+        adjustCurrentRowConstraint(newLabel: label)
+        if startNewRow {
+            self.baseView.layoutIfNeeded()
+        }
         
         animate(label: label)
         

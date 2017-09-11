@@ -49,7 +49,8 @@ class ResultViewManager {
         for operation in operations {
             views.append(operation.labelView())
         }
-        views.append(Operation(type: .Equal, num: to).labelView())
+        views.append(Operation(type: .Equal).labelView())
+        views.append(to.labelView())
         
         baseView.addSubview(scrollView)
         constraints.append(NSLayoutConstraint(item: scrollView, attribute: .top, relatedBy: .equal,

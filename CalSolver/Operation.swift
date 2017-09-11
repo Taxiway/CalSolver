@@ -17,7 +17,8 @@ enum OperationType: String {
     case Append = "A"
     case Convert = ">"
     case Power = "X"
-    case Reverse = "+-"
+    case Negative = "+-"
+    case Reverse = "R"
     case Equal = "="
 }
 
@@ -31,6 +32,7 @@ class Operation {
     class func createOperation(text: String) -> Operation? {
         guard text.characters.count >= 1 else { return nil }
         if let type = OperationType(rawValue: text) {
+            guard type == .Delete || type == .Negative || type == .Equal || type == .Reverse else { return nil }
             return Operation(type: type)
         }
         guard let type = OperationType(rawValue: text.uppercased().substring(to: text.index(after: text.startIndex))) else {
@@ -46,10 +48,6 @@ class Operation {
                     return nil
                 }
             }
-        }
-        if type == .Delete {
-            guard text.characters.count == 1 else { return nil }
-            return Operation(type: .Delete, num: nil)
         }
         guard let number = Int(text.substring(from: text.index(after: text.startIndex))) else { return nil }
         return Operation(type: type, num: number)
@@ -87,8 +85,14 @@ class Operation {
                 ret *= current
             }
             return ret
-        case .Reverse:
+        case .Negative:
             return -current
+        case .Reverse:
+            if current < 0 {
+                return -operate(current: -current)!
+            } else {
+                return Int(String(current).reverse())
+            }
         default:
             return current
         }
@@ -118,5 +122,13 @@ class Operation {
         label.layer.borderWidth = 1.0
         label.sizeToFit()
         return label
+    }
+}
+
+extension String {
+    func reverse() -> String {
+        let chars = characters
+        let reversedChars = chars.reversed()
+        return String(reversedChars)
     }
 }
